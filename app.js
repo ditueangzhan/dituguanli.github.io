@@ -1,97 +1,155 @@
-// DOM 元素
+// ==============================================
+// 带登录权限版 → 游客/管理员/查看员 三种权限
+// ==============================================
 const tableBody = document.getElementById("tableBody");
 const addRowBtn = document.getElementById("addRowBtn");
 const saveBtn = document.getElementById("saveBtn");
 const refreshBtn = document.getElementById("refreshBtn");
 
-// 数据存在浏览器本地
 let tableData = [];
+let userRole = null; // null=未登录 guest=游客 admin=管理员 viewer=只能导入查看
 
-// 页面加载时读取本地数据（不弹任何提示）
-window.onload = () => {
-    const localData = localStorage.getItem("playerTableData");
-    if (localData) {
-        tableData = JSON.parse(localData);
-    } else {
-        tableData = [];
-    }
-    renderTable();
+// 账号密码配置
+const users = {
+  "iosdtglbmm": { pwd: "bmm8989", role: "admin" },
+  "gcxtckrsgl": { pwd: "gcgl8989", role: "viewer" }
 };
 
-// 渲染表格 + 自动序号
+// 页面先弹出登录框
+window.onload = () => {
+  login();
+  loadLocalData();
+};
+
+// 登录逻辑
+function login() {
+  const choice = prompt("请选择登录方式：\n1. 管理员登录\n2. 查看员登录\n3. 游客浏览（只能看）", "3");
+  if (choice === "1") {
+    const user = prompt("请输入账号：");
+    const pwd = prompt("请输入密码：");
+    if (users[user] && users[user].pwd === pwd) {
+      userRole = users[user].role;
+      alert("登录成功！欢迎管理员");
+    } else {
+      alert("账号或密码错误，自动转为游客");
+      userRole = "guest";
+    }
+  } else if (choice === "2") {
+    const user = prompt("请输入账号：");
+    const pwd = prompt("请输入密码：");
+    if (users[user] && users[user].pwd === pwd) {
+      userRole = "viewer";
+      alert("登录成功！您可以导入和查看");
+    } else {
+      alert("账号或密码错误，自动转为游客");
+      userRole = "guest";
+    }
+  } else {
+    userRole = "guest";
+    alert("游客模式：仅可查看、导入");
+  }
+  applyPermission();
+  renderTable();
+}
+
+// 权限控制
+function applyPermission() {
+  if (userRole === "admin") {
+    addRowBtn.style.display = "inline-block";
+    saveBtn.style.display = "inline-block";
+    setInputEdit(true);
+  } else if (userRole === "viewer") {
+    addRowBtn.style.display = "none";
+    saveBtn.style.display = "none";
+    setInputEdit(false);
+  } else {
+    addRowBtn.style.display = "none";
+    saveBtn.style.display = "none";
+    setInputEdit(false);
+  }
+}
+
+// 设置输入框是否可编辑
+function setInputEdit(canEdit) {
+  document.querySelectorAll("input").forEach(i => {
+    i.readOnly = !canEdit;
+  });
+}
+
+// 读取本地数据
+function loadLocalData() {
+  const local = localStorage.getItem("playerTableData");
+  tableData = local ? JSON.parse(local) : [];
+  renderTable();
+}
+
+// 渲染表格
 function renderTable() {
-    tableBody.innerHTML = "";
-    tableData.forEach((item, idx) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-            <td>${idx + 1}</td>
-            <td><input type="text" class="groupName" value="${item.groupName || ''}"></td>
-            <td><input type="text" class="qq" value="${item.qq || ''}"></td>
-            <td><input type="text" class="count" value="${item.count || ''}"></td>
-        `;
-        tableBody.appendChild(tr);
-    });
+  tableBody.innerHTML = "";
+  tableData.forEach((item, idx) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${idx + 1}</td>
+      <td><input type="text" class="groupName" value="${item.groupName || ''}"></td>
+      <td><input type="text" class="qq" value="${item.qq || ''}"></td>
+      <td><input type="text" class="count" value="${item.count || ''}"></td>
+    `;
+    tableBody.appendChild(tr);
+  });
+  applyPermission();
 }
 
-// 新增一行
+// 新增行
 addRowBtn.addEventListener("click", () => {
-    tableData.push({
-        groupName: "",
-        qq: "",
-        count: ""
-    });
-    renderTable();
+  if (userRole !== "admin") return;
+  tableData.push({ groupName: "", qq: "", count: "" });
+  renderTable();
 });
 
-// 收集表格数据
+// 收集数据
 function collectData() {
-    const rows = tableBody.querySelectorAll("tr");
-    const arr = [];
-    rows.forEach(tr => {
-        const groupName = tr.querySelector(".groupName").value.trim();
-        const qq = tr.querySelector(".qq").value.trim();
-        const count = tr.querySelector(".count").value.trim();
-        arr.push({ groupName, qq, count });
+  const arr = [];
+  document.querySelectorAll("tbody tr").forEach(tr => {
+    arr.push({
+      groupName: tr.querySelector(".groupName").value.trim(),
+      qq: tr.querySelector(".qq").value.trim(),
+      count: tr.querySelector(".count").value.trim()
     });
-    return arr;
+  });
+  return arr;
 }
 
-// 保存到本地 + 导出文件（不弹多余提示）
+// 保存
 saveBtn.addEventListener("click", () => {
-    tableData = collectData();
-    // 1. 保存到浏览器本地存储
-    localStorage.setItem("playerTableData", JSON.stringify(tableData));
-    // 2. 生成并下载 JSON 文件
-    const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tableData, null, 2));
-    const downloadAnchorNode = document.createElement('a');
-    downloadAnchorNode.setAttribute("href", dataStr);
-    downloadAnchorNode.setAttribute("download", "playerTableData.json");
-    document.body.appendChild(downloadAnchorNode);
-    downloadAnchorNode.click();
-    downloadAnchorNode.remove();
+  if (userRole !== "admin") return;
+  tableData = collectData();
+  localStorage.setItem("playerTableData", JSON.stringify(tableData));
+  const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tableData, null, 2));
+  const a = document.createElement("a");
+  a.href = dataStr;
+  a.download = "playerTableData.json";
+  a.click();
 });
 
-// 刷新读取（手动导入文件，不弹多余提示）
+// 刷新/导入
 refreshBtn.addEventListener("click", () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = (e) => {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = (event) => {
-            try {
-                const data = JSON.parse(event.target.result);
-                tableData = data;
-                localStorage.setItem("playerTableData", JSON.stringify(tableData));
-                renderTable();
-            } catch (err) {
-                // 错误提示也可以删掉，这里留着方便排查
-                alert("文件格式错误");
-            }
-        };
-        reader.readAsText(file);
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json";
+  input.onchange = (e) => {
+    const file = e.target.files[0];
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      try {
+        tableData = JSON.parse(ev.target.result);
+        localStorage.setItem("playerTableData", JSON.stringify(tableData));
+        renderTable();
+        alert("导入成功");
+      } catch {
+        alert("格式错误");
+      }
     };
-    input.click();
+    reader.readAsText(file);
+  };
+  input.click();
 });
