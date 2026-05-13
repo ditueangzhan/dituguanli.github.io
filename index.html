@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玩家组的有效处理次数</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="wrap">
+        <h1 class="title">玩家组的有效处理次数</h1>
+
+        <div class="btn-box">
+            <button id="addRowBtn">➕ 新增一行</button>
+            <button id="saveBtn">💾 保存数据</button>
+            <button id="refreshBtn">🔄 刷新读取</button>
+        </div>
+
+        <div class="table-box">
+            <table id="dataTable">
+                <thead>
+                    <tr>
+                        <th>序号</th>
+                        <th>玩家组名字</th>
+                        <th>QQ号</th>
+                        <th>本周有效处理次数</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
