@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>玩家代表组织架构 | 玻璃质感职位系统</title>
+    <title>玩家代表组织架构 | 职位系统 · 受保护职位公示</title>
     <!-- Font Awesome 6 (免费图标库) -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <style>
@@ -21,7 +21,6 @@
             position: relative;
         }
 
-        /* 光晕背景 */
         body::before {
             content: "";
             position: fixed;
@@ -41,24 +40,20 @@
             z-index: 2;
         }
 
-        /* 玻璃卡片 悬浮窗效果 */
         .glass-card {
             background: rgba(255, 255, 255, 0.35);
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border-radius: 2rem;
             border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.05);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s ease;
         }
 
         .glass-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.15);
             background: rgba(255, 255, 255, 0.45);
         }
 
-        /* 顶部切换栏样式 (tab) */
         .tabs-container {
             display: flex;
             gap: 1rem;
@@ -72,37 +67,22 @@
             border: 1px solid rgba(255,255,245,0.7);
             padding: 0.8rem 2rem;
             border-radius: 60px;
-            font-size: 1.1rem;
+            font-size: 1rem;
             font-weight: 600;
             color: #05445e;
             cursor: pointer;
             transition: all 0.2s ease;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
-            letter-spacing: 1px;
         }
-        .tab-btn i {
-            margin-right: 8px;
-        }
+        .tab-btn i { margin-right: 8px; }
         .tab-btn.active {
             background: rgba(30, 100, 150, 0.7);
             color: white;
             border-color: white;
-            box-shadow: 0 8px 18px rgba(0,0,0,0.15);
-            text-shadow: 0 1px 1px rgba(0,0,0,0.1);
         }
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        .tab-content.active-tab {
-            display: block;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(6px);}
-            to { opacity: 1; transform: translateY(0);}
-        }
+        .tab-content { display: none; animation: fadeIn 0.3s ease; }
+        .tab-content.active-tab { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
 
-        /* 原有样式兼容 */
         .hero-section {
             text-align: center;
             margin-bottom: 2rem;
@@ -147,7 +127,6 @@
             padding: 0.8rem 1rem;
             border-bottom: 1px solid rgba(255,255,255,0.25);
             color: #023047;
-            font-weight: 500;
             background: rgba(255,255,255,0.2);
         }
         .badge {
@@ -156,6 +135,15 @@
             border-radius: 40px;
             font-size: 0.7rem;
             color: white;
+        }
+        .protected-badge {
+            background: #d97706;
+            padding: 0.2rem 0.7rem;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            color: white;
+            margin-left: 8px;
+            font-weight: bold;
         }
         .card-title {
             font-size: 1.4rem;
@@ -167,10 +155,13 @@
             align-items: center;
             gap: 10px;
             color: #05445e;
+            padding-left: 1rem;
+            padding-top: 0.8rem;
         }
         .list-styled {
             list-style: none;
             padding-left: 0;
+            margin: 0 1rem 1rem 1rem;
         }
         .list-styled li {
             margin-bottom: 0.6rem;
@@ -183,12 +174,11 @@
             top: 0.2rem;
             color: #0077b6;
         }
-        /* 职位查看页面人员卡片网格 */
         .person-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
             gap: 1.5rem;
-            margin-top: 1rem;
+            margin: 1rem;
         }
         .person-card {
             background: rgba(255, 255, 255, 0.4);
@@ -197,10 +187,11 @@
             padding: 1.2rem 1.5rem;
             border: 1px solid rgba(255,255,245,0.6);
             transition: 0.2s;
+            position: relative;
         }
-        .person-card:hover {
-            background: rgba(255,255,250,0.6);
-            transform: scale(1.01);
+        .person-card.protected-card {
+            border-left: 5px solid #f59e0b;
+            background: rgba(255, 245, 215, 0.5);
         }
         .person-name {
             font-size: 1.4rem;
@@ -209,6 +200,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            flex-wrap: wrap;
             margin-bottom: 0.5rem;
         }
         .person-role {
@@ -225,40 +217,26 @@
             margin: 0.6rem 0;
             font-size: 0.85rem;
             display: flex;
-            align-items: baseline;
             gap: 8px;
             flex-wrap: wrap;
         }
-        .info-line strong {
-            min-width: 85px;
-            color: #014164;
-        }
+        .info-line strong { min-width: 90px; color: #014164; }
         .search-bar {
             display: flex;
             gap: 12px;
-            margin-bottom: 2rem;
+            margin: 1rem;
             flex-wrap: wrap;
             align-items: center;
             background: rgba(255,255,240,0.5);
             backdrop-filter: blur(4px);
-            padding: 1rem 1.5rem;
+            padding: 1rem;
             border-radius: 60px;
         }
-        .search-bar input {
-            flex: 2;
+        .search-bar input, .search-bar select {
             padding: 0.7rem 1rem;
             border-radius: 40px;
             border: none;
             background: rgba(255,255,255,0.8);
-            font-size: 0.9rem;
-            outline: none;
-        }
-        .search-bar select {
-            padding: 0.7rem 1rem;
-            border-radius: 40px;
-            border: none;
-            background: rgba(255,255,255,0.8);
-            font-weight: 500;
         }
         .filter-btn {
             background: #2c6e9e;
@@ -267,7 +245,6 @@
             padding: 0.7rem 1.4rem;
             border-radius: 40px;
             cursor: pointer;
-            font-weight: bold;
         }
         footer {
             text-align: center;
@@ -281,27 +258,35 @@
             margin-left: auto;
             margin-right: auto;
         }
-        @media (max-width: 640px) {
-            body { padding: 1rem; }
-            .tab-btn { padding: 0.5rem 1rem; font-size: 0.9rem;}
-        }
         .apply-template {
             background: rgba(0,0,0,0.05);
             border-radius: 1rem;
             padding: 0.6rem;
             font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+        .rule-protection {
+            background: linear-gradient(90deg, #fef3c7, #ffedd5);
+            border-left: 4px solid #d97706;
+            padding: 0.8rem;
+            border-radius: 1rem;
+            margin: 1rem;
+            font-size: 0.75rem;
+        }
+        @media (max-width: 640px) {
+            body { padding: 1rem; }
+            .tab-btn { padding: 0.5rem 1rem; font-size: 0.8rem; }
         }
     </style>
 </head>
 <body>
 <div class="glass-container">
-    <!-- 顶部切换栏目 -->
     <div class="tabs-container">
         <div class="tab-btn active" data-tab="tab1"><i class="fas fa-home"></i> 主页 · 公告总览</div>
         <div class="tab-btn" data-tab="tab2"><i class="fas fa-id-badge"></i> 职位查看 · 人员架构</div>
     </div>
 
-    <!-- ========================= 主页内容 (原样保留，玻璃悬浮窗表格等) ========================= -->
+    <!-- ================= 主页内容 ================= -->
     <div id="tab1" class="tab-content active-tab">
         <div class="hero-section glass-card">
             <h1><i class="fas fa-users-viewfinder"></i> 玩家全局代表任职及玩家组管理制度公告</h1>
@@ -309,13 +294,11 @@
             <p><i class="fas fa-crown"></i> 最高职位：玩家全局代表 · 统筹全体玩家事务</p>
         </div>
 
-        <!-- 核心任职公告表格 -->
         <div class="table-wrapper glass-card">
             <table class="data-table">
-                <thead><tr><th colspan="2">📌 一、全局代表任职公告 · 核心权责表</th></tr>
-                <tr><th>职位</th><th>任职人员 / 详细信息</th></tr></thead>
+                <thead><tr><th colspan="2">📌 一、全局代表任职公告 · 核心权责表</th></tr></thead>
                 <tbody>
-                    <tr><td><span class="badge">玩家全局代表</span></td><td><strong>笨眠眠</strong> （QQ：1037590898） — 全体玩家最高职位，永久常驻席位</td></tr>
+                    <tr><td><span class="badge">玩家全局代表</span></td><td><strong>笨眠眠</strong>（QQ：1037590898）— 全体玩家最高职位，永久常驻席位 <span class="protected-badge">🛡️ 受底层任免书永久保护</span></td></tr>
                     <tr><td>职位定位</td><td>统筹所有玩家相关事务，全权接收反馈/BUG/建议，收集举报证据提交地图管理委员会</td></tr>
                     <tr><td>越级上报权</td><td>拥有越级上报权限，可直接向高阶部门提交玩家集体诉求、个人合理异议及整改建议</td></tr>
                     <tr><td>管理权限</td><td>管辖玩家组全体人员，并组织后续玩家副代表选举、统一管辖各级代表</td></tr>
@@ -323,19 +306,31 @@
             </table>
         </div>
 
-        <!-- 组织架构网格 (保持原有玻璃质感) -->
+        <!-- 新增超管公示栏 -->
+        <div class="table-wrapper glass-card">
+            <table class="data-table">
+                <thead><tr><th colspan="2">⭐ 二、管理组超管任职公告（管理整个管理组）</th></tr></thead>
+                <tbody>
+                    <tr><td><span class="badge">总超管</span></td><td><strong>怡梦(*^ω^*)</strong>（QQ：3266134112）— 全权管理管理组，协调超管事务，受顶层高层直接任命 <span class="protected-badge">🛡️ 受保护职位</span></td></tr>
+                    <tr><td><span class="badge">副总超管</span></td><td><strong>晚枫</strong>（QQ：2039329745）— 协助管理管理组，执行超管调度，监督管理组履职 <span class="protected-badge">🛡️ 受保护职位</span></td></tr>
+                    <tr><td>管理组权责</td><td colspan="2">管理组全体超管需服从怡梦、晚枫调度，负责社群秩序、违规处理、协助玩家组对接；任何管理组调动玩家代表须经顶层高层审批。</td></tr>
+                </tbody>
+            </table>
+        </div>
+
         <div class="info-grid">
-            <div class="glass-card" style="padding: 1.3rem;">
+            <div class="glass-card">
                 <div class="card-title"><i class="fas fa-building"></i> 完整层级排序</div>
                 <ul class="list-styled">
                     <li><i class="fas fa-star-of-life"></i> <strong>顶层高层</strong>：晚风 & love（平级）</li>
+                    <li><i class="fas fa-user-shield"></i> <strong>总超管/副总超管</strong>：怡梦、晚枫（管理整个管理组）</li>
                     <li><i class="fas fa-user-tie"></i> 二级管理：管理组（含超管）</li>
                     <li><i class="fas fa-users"></i> 三级代表：玩家全局代表（笨眠眠）、副代表</li>
                     <li><i class="fas fa-layer-group"></i> 四级组织：玩家组（组长→组员）</li>
                     <li><i class="fas fa-user-friends"></i> 底层成员：普通玩家</li>
                 </ul>
             </div>
-            <div class="glass-card" style="padding: 1.3rem;">
+            <div class="glass-card">
                 <div class="card-title"><i class="fas fa-trophy"></i> 玩家组 & 奖惩</div>
                 <ul class="list-styled">
                     <li><i class="fas fa-sitemap"></i> 架构：全局代表→组长→组员</li>
@@ -344,242 +339,151 @@
                 </ul>
                 <div class="apply-template">免责：玩家组无强制义务服务无理要求，可拒绝留证。</div>
             </div>
-            <div class="glass-card" style="padding: 1.3rem;">
+            <div class="glass-card">
                 <div class="card-title"><i class="fas fa-file-signature"></i> 专属权限调度</div>
                 <ul class="list-styled">
                     <li><i class="fas fa-shield-alt"></i> 玩家代表只对顶层高层负责，管理组不得私自调配</li>
                     <li><i class="fas fa-clipboard-list"></i> 派遣须填申请书经高层审批</li>
+                    <li><i class="fas fa-handshake"></i> 超管怡梦/晚枫有权管理管理组，但涉及玩家代表事务仍需顶层高层批准</li>
                 </ul>
-                <div class="apply-template">📄 玩家组事务派遣申请书模板：申请人+事务+高层签字</div>
             </div>
         </div>
 
-        <!-- 副代表选举表 -->
+        <!-- 受保护职位依据 + 管理依据补充 -->
+        <div class="glass-card" style="padding: 1rem; margin-bottom: 1.5rem;">
+            <div class="card-title"><i class="fas fa-scroll"></i> 管理依据与受保护法则</div>
+            <div class="rule-protection">
+                <i class="fas fa-gavel"></i> <strong>📜 底层任免书 · 永久保护条款</strong><br>
+                根据《底层任免书》核心铁律：当晚风从全局会长职位退位或仅保留地图管理时，其在位期间正式任命的所有管理人员——<strong>玩家全局代表（笨眠眠）、玩家副代表、玩家组全体岗位、管理组核心成员（包含总超管怡梦、副总超管晚枫）</strong>——均受永久职位保护。任何代理高层、副高层、新高层不得因个人私欲、派系好恶撤销、降职或架空上述岗位。<br>
+                <span class="protected-badge" style="display: inline-block; margin-top: 6px;">⚡ 保护依据：底层任免书第一章至第四章 | 违反者按第三章违规处置条例严惩</span>
+            </div>
+            <div class="rule-protection" style="background: #e0f2fe; border-left-color: #0284c7;">
+                <i class="fas fa-balance-scale"></i> <strong>🏛️ 管理组超管权责与保护依据</strong><br>
+                怡梦、晚枫作为管理组总负责人，其职位受《底层任免书》及《玩家组管理制度》双重保护。管理组内部任免须经顶层高层（晚风、love）批准，任何代理高层无权私自更替。同时依据“反清算保护条款”，管理组核心架构不受后续高层清洗影响。<br>
+                <strong>受保护范围：</strong> 总超管、副总超管职位不可因继任者意愿被撤换；管理组其余超管成员由怡梦/晚枫提名后受同等级保护。
+            </div>
+            <div class="rule-protection" style="background: #dcfce7; border-left-color: #16a34a;">
+                <i class="fas fa-hand-peace"></i> <strong>✨ 玩家组自治根基与《选举专属条例》</strong><br>
+                玩家全局代表笨眠眠及其管辖的玩家组，独立于管理组之外，仅对顶层高层负责。管理组（包括超管）如需玩家组配合，必须使用《玩家代表/玩家组事务派遣申请书》并经过晚风/love审批。任何违规调度均属无效，按越权违规处理。
+            </div>
+        </div>
+
         <div class="table-wrapper glass-card">
-            <table class="data-table"><thead><tr><th colspan="2">🗳️ 副玩家代表选举专属规则</th></tr>
-            <tr><th>项目</th><th>内容</th></tr></thead><tbody>
-                <tr><td>总代表永久席位</td><td>笨眠眠永久常驻，不可强制撤职</td></tr>
+            <table class="data-table"><thead><tr><th colspan="2">🗳️ 副玩家代表选举专属规则</th></tr></thead>
+            <tbody>
+                <tr><td>总代表永久席位</td><td>笨眠眠永久常驻，不可强制撤职 <span class="protected-badge">底层任免书保护</span></td></tr>
                 <tr><td>选举开启</td><td>社群≥80人开启，最多12名候选人</td></tr>
                 <tr><td>奖励机制</td><td>副代表上任奖+周福利；投票玩家支持获胜者也有奖励</td></tr>
                 <tr><td>任期考核</td><td>3个月，中期测评，不合格则重选</td></tr>
                 <tr><td>违规处罚</td><td>包庇/滥用即革职+黑名单+封禁</td></tr>
             </tbody></table>
         </div>
-        <!-- 额外底层规则保留 -->
-        <footer class="glass-card" style="margin-top: 0.5rem;">
+        <footer class="glass-card">
             <i class="fas fa-dragon"></i> 本制度永久生效 · 修改权归属顶层高层（晚风 & love）<br>
-            玩家全局代表笨眠眠 QQ:1037590898 | 玩家组自治官方组织
+            玩家全局代表笨眠眠 QQ:1037590898 | 总超管怡梦 QQ:3266134112 | 副总超管晚枫 QQ:2039329745
         </footer>
     </div>
 
-    <!-- ========================= 职位查看页面 (可按姓名/层级查看人员职务、权力义务及所属机构) ========================= -->
+    <!-- ================= 职位查看页面（含超管+受保护标识） ================= -->
     <div id="tab2" class="tab-content">
-        <div class="glass-card" style="padding: 1.5rem; margin-bottom: 1.5rem;">
-            <div class="card-title"><i class="fas fa-address-card"></i> 人员职位检索系统 · 权力义务与隶属机构</div>
+        <div class="glass-card" style="padding: 1.5rem 0 1rem 0;">
+            <div class="card-title"><i class="fas fa-address-card"></i> 人员职位检索 · 受保护职位已标注 🛡️</div>
             <div class="search-bar">
-                <input type="text" id="searchInput" placeholder="输入姓名 / 昵称 筛选... (如：笨眠眠, 晚风, love)" style="flex:2">
+                <input type="text" id="searchInput" placeholder="输入姓名/昵称筛选...">
                 <select id="levelFilter">
                     <option value="all">全部层级</option>
                     <option value="顶层高层">顶层高层</option>
+                    <option value="总超管">总超管/副总超管</option>
                     <option value="二级管理">二级管理</option>
                     <option value="玩家代表">玩家代表</option>
-                    <option value="玩家组">玩家组(组长/组员)</option>
+                    <option value="玩家组">玩家组</option>
                     <option value="底层成员">底层成员</option>
                 </select>
-                <button class="filter-btn" id="resetFilterBtn"><i class="fas fa-sync-alt"></i> 重置筛选</button>
+                <button class="filter-btn" id="resetFilterBtn"><i class="fas fa-sync-alt"></i> 重置</button>
             </div>
-            <div id="personListContainer" class="person-grid">
-                <!-- 动态渲染人员卡片 -->
-            </div>
-            <div class="quote-note" style="margin-top: 1rem; background: rgba(0,0,0,0.1); border-radius: 1rem; padding: 0.8rem;">
-                <i class="fas fa-info-circle"></i> 数据基于内测组织架构 · 各职位权责归属依据公告制度与玩家组管理条例。 
+            <div id="personListContainer" class="person-grid"></div>
+            <div class="rule-protection" style="margin: 1rem;">
+                <i class="fas fa-shield-hooded"></i> <strong>受保护职位说明：</strong> 标有 <span class="protected-badge">🛡️ 受底层任免书永久保护</span> 的岗位（玩家全局代表、玩家组全体、管理组超管怡梦/晚枫等），依据《底层任免书》及《反清算保护条款》，任何代理高层、新高层不得因个人私欲撤换或架空。
             </div>
         </div>
     </div>
-
-    <footer style="margin-top: 1.2rem;">
-        <i class="fas fa-database"></i> 数据同步于最新玩家代表任职及玩家组管理制度 | 悬浮窗材质 蓝色渐变玻璃表
-    </footer>
+    <footer><i class="fas fa-database"></i> 数据基于最新组织架构 | 受保护职位受底层任免书及双高层永久背书</footer>
 </div>
 
 <script>
-    // ---------- 人员数据集 (严格按照公告职位，权力义务，所属管理机构) ----------
+    // 人员数据集（新增怡梦、晚枫两位超管，标记受保护职位）
     const personnelData = [
-        {
-            name: "晚风",
-            qq: "3792635287",
-            level: "顶层高层",
-            role: "全局会长",
-            institution: "顶层高层 / 地图管理委员会最高监管层",
-            powers: "全体系最高层管理，所有群聊群主/管理员权限，统筹社群、地图管理、人事架构全事务。与love平级，拥有选举干涉、制度修改最高权。",
-            duties: "负责顶层调度，监管玩家代表及管理组，审批管理组对玩家代表的调度申请，拥有最终决策权。"
-        },
-        {
-            name: "love",
-            qq: "3695426457",
-            level: "顶层高层",
-            role: "地图管理委员会会主",
-            institution: "地图管理委员会 / 顶层高层",
-            powers: "与晚风完全平级，全群管理员权限，主负责地图管理委员会统筹、规则制定、审批裁定。有权审批玩家组奖励与处罚。",
-            duties: "制定委员会规章，裁决重大违规，批准玩家组奖励发放，与晚风共同监管选举流程。"
-        },
-        {
-            name: "笨眠眠",
-            qq: "1037590898",
-            level: "玩家代表",
-            role: "玩家全局代表 (永久常驻席位)",
-            institution: "玩家全局代表办公室 / 隶属于顶层高层及地图管理委员会",
-            powers: "全体玩家最高职位，统筹玩家反馈/BUG/举报证据，拥有越级上报权，管辖玩家组全部人事，组织副代表选举，可任命组长。",
-            duties: "接收全量玩家诉求，提交委员会奖励名单，管理玩家组日常运营，对副代表进行考核调度。"
-        },
-        {
-            name: "副代表 (待选举)",
-            qq: "后续选举产生",
-            level: "玩家代表",
-            role: "玩家副代表",
-            institution: "玩家代表协理机构 / 受玩家全局代表管辖",
-            powers: "协助总代表管理玩家组，总代表临时离岗时代行全部职权；有权收集玩家反馈、提交证据，但重大事项需经总代表审批。",
-            duties: "无条件听从总代表指挥，负责日常玩家组事务协调，参与中期考核民意评测。"
-        },
-        {
-            name: "管理组 (超管代表)",
-            qq: "由顶层高层分配",
-            level: "二级管理",
-            role: "高级管理员 / 超管",
-            institution: "管理组委员会 / 直属顶层高层",
-            powers: "执行管理规则，维护社群秩序，协助顶层高层执行调度；但无权私自命令玩家代表，须经高层审批。",
-            duties: "听从晚风、love调度，处理违规，监督玩家组规范运作，定期向委员会汇报。"
-        },
-        {
-            name: "玩家组组长 (待选拔)",
-            qq: "由笨眠眠任免",
-            level: "玩家组",
-            role: "玩家组组长",
-            institution: "玩家组 / 归属玩家全局代表直辖",
-            powers: "管理组内组员，汇总日常举报、优质建议上报给总代表，有权初步审核组员奖励申请。",
-            duties: "组织组员收集意见，维护秩序，每周整理有功人员名单提交玩家代表。"
-        },
-        {
-            name: "玩家组组员 (成员招募)",
-            qq: "面向全体内测玩家",
-            level: "玩家组",
-            role: "玩家组组员",
-            institution: "玩家组基层 / 由组长及全局代表管理",
-            powers: "接收玩家基础举报，参与玩家反馈整理，享受组内奖励权益。无强制性义务应对无理请求。",
-            duties: "日常收集意见，协助维护内测交流群秩序，及时举报恶性行为。"
-        },
-        {
-            name: "普通玩家 (社群基础层)",
-            qq: "加入交流群成员",
-            level: "底层成员",
-            role: "社群成员",
-            institution: "基础社群层",
-            powers: "参与反馈、游戏内测讨论，有权投票选举副代表，申请加入玩家组，享有投票奖励。",
-            duties: "遵守社群制度，不得骚扰玩家组及代表，可提交建议至玩家代表。"
-        }
+        { name: "晚风", qq: "3792635287", level: "顶层高层", role: "全局会长", institution: "顶层高层 / 地图管理委员会", powers: "全体系最高层管理，制度修改最高权", duties: "监管玩家代表及管理组", protected: true },
+        { name: "love", qq: "3695426457", level: "顶层高层", role: "委员会会主", institution: "顶层高层 / 地图管理委员会", powers: "规则制定、审批裁定", duties: "裁决重大违规，监管选举", protected: true },
+        { name: "怡梦(*^ω^*)", qq: "3266134112", level: "总超管", role: "总超管（管理整个管理组）", institution: "管理组委员会 / 直属顶层高层", powers: "全权管理管理组，协调超管事务，有权对管理组进行任免提名", duties: "带领管理组维护秩序，对接顶层高层，确保管理组规范履职", protected: true },
+        { name: "晚枫", qq: "2039329745", level: "总超管", role: "副总超管", institution: "管理组委员会 / 直属顶层高层", powers: "协助管理管理组，执行超管调度，监督管理组履职情况", duties: "配合怡梦处理管理组事务，监管超管行为，向上汇报", protected: true },
+        { name: "笨眠眠", qq: "1037590898", level: "玩家代表", role: "玩家全局代表 (永久常驻席位)", institution: "玩家全局代表办公室", powers: "全体玩家最高职位，越级上报，管辖玩家组", duties: "接收反馈，管理玩家组，组织副代表选举", protected: true },
+        { name: "副代表 (待选举)", qq: "后续选举产生", level: "玩家代表", role: "玩家副代表", institution: "玩家代表协理机构", powers: "协助总代表，临时代行职权", duties: "听从总代表指挥，参与考核", protected: true },
+        { name: "管理组超管成员", qq: "由怡梦/晚枫提名", level: "二级管理", role: "超管", institution: "管理组委员会", powers: "执行管理规则，协助超管调度", duties: "维护社群秩序，不得私自命令玩家代表", protected: false },
+        { name: "玩家组组长", qq: "由笨眠眠任免", level: "玩家组", role: "组长", institution: "玩家组", powers: "管理组员，上报奖励申请", duties: "组织收集意见，维护秩序", protected: true },
+        { name: "玩家组组员", qq: "招募中", level: "玩家组", role: "组员", institution: "玩家组基层", powers: "接收举报，整理反馈，享受奖励", duties: "日常收集意见，协助秩序", protected: true },
+        { name: "普通玩家", qq: "交流群成员", level: "底层成员", role: "社群成员", institution: "基础社群层", powers: "投票选举，申请入组", duties: "遵守制度，不得骚扰代表", protected: false }
     ];
 
-    // 额外补充：为了方便体现笨眠眠所属管理机构详细说明 以及 玩家组的权责拓展
-    // 渲染职位卡片函数
+    function escapeHtml(s) { return s?.replace(/[&<>]/g, function(m){ if(m==='&') return '&amp;'; if(m==='<') return '&lt;'; if(m==='>') return '&gt;'; return m;}) || ''; }
+
     function renderPersonnel(filterText, filterLevel) {
         const container = document.getElementById('personListContainer');
         if (!container) return;
-        let filtered = [...personnelData];
-        
-        if (filterText && filterText.trim() !== "") {
-            const kw = filterText.trim().toLowerCase();
-            filtered = filtered.filter(p => p.name.toLowerCase().includes(kw) || p.role.toLowerCase().includes(kw) || (p.qq && p.qq.includes(kw)));
-        }
-        if (filterLevel && filterLevel !== "all") {
-            filtered = filtered.filter(p => p.level === filterLevel);
-        }
-        
+        let filtered = personnelData.filter(p => {
+            let matchLevel = (filterLevel === 'all' || p.level === filterLevel);
+            if (filterLevel === '总超管') matchLevel = (p.level === '总超管');
+            if (!matchLevel) return false;
+            if (filterText && filterText.trim()) {
+                const kw = filterText.trim().toLowerCase();
+                return p.name.toLowerCase().includes(kw) || p.role.toLowerCase().includes(kw) || p.qq.includes(kw);
+            }
+            return true;
+        });
         if (filtered.length === 0) {
-            container.innerHTML = `<div class="glass-card" style="grid-column:1/-1; text-align:center; padding:2rem;">未找到匹配人员，请调整筛选条件</div>`;
+            container.innerHTML = `<div class="glass-card" style="grid-column:1/-1; text-align:center; padding:2rem;">未找到匹配人员</div>`;
             return;
         }
-        
         let html = "";
-        filtered.forEach(person => {
-            // 权力义务整合字段: 权限+职责展示清晰
+        filtered.forEach(p => {
+            const isProtected = p.protected === true || p.level === '顶层高层' || p.level === '玩家代表' || p.level === '总超管' || (p.level === '玩家组');
+            const protectedTag = isProtected ? '<span class="protected-badge">🛡️ 受底层任免书永久保护</span>' : '';
             html += `
-                <div class="person-card">
+                <div class="person-card ${isProtected ? 'protected-card' : ''}">
                     <div class="person-name">
-                        <i class="fas fa-user-circle"></i> ${escapeHtml(person.name)}
-                        ${person.level === '顶层高层' ? '<i class="fas fa-crown" style="color:#f3b33d;"></i>' : ''}
-                        ${person.level === '玩家代表' ? '<i class="fas fa-star" style="color:#2a9d8f;"></i>' : ''}
+                        <i class="fas fa-user-circle"></i> ${escapeHtml(p.name)}
+                        ${p.level === '顶层高层' ? '<i class="fas fa-crown" style="color:#f3b33d;"></i>' : ''}
+                        ${p.level === '总超管' ? '<i class="fas fa-user-shield" style="color:#f59e0b;"></i>' : ''}
+                        ${protectedTag}
                     </div>
-                    <div class="person-role">${escapeHtml(person.role)}</div>
-                    <div class="info-line"><strong><i class="fas fa-tag"></i> 层级</strong> ${escapeHtml(person.level)}</div>
-                    <div class="info-line"><strong><i class="fas fa-building"></i> 所属机构</strong> ${escapeHtml(person.institution)}</div>
-                    <div class="info-line"><strong><i class="fab fa-qq"></i> 联系方式</strong> ${escapeHtml(person.qq)}</div>
-                    <div class="info-line"><strong><i class="fas fa-bolt"></i> 核心权力</strong> <span style="flex:1;">${escapeHtml(person.powers)}</span></div>
-                    <div class="info-line"><strong><i class="fas fa-tasks"></i> 义务/职责</strong> <span style="flex:1;">${escapeHtml(person.duties)}</span></div>
-                    <div class="apply-template" style="margin-top: 0.5rem; background: rgba(0, 70, 100, 0.1);">
-                        <i class="fas fa-gavel"></i> 管理依据：《玩家全局代表任职及玩家组管理制度》《选举专属条例》
-                    </div>
+                    <div class="person-role">${escapeHtml(p.role)}</div>
+                    <div class="info-line"><strong>层级</strong> ${escapeHtml(p.level)}</div>
+                    <div class="info-line"><strong>所属机构</strong> ${escapeHtml(p.institution)}</div>
+                    <div class="info-line"><strong>联系方式</strong> ${escapeHtml(p.qq)}</div>
+                    <div class="info-line"><strong>核心权力</strong> ${escapeHtml(p.powers)}</div>
+                    <div class="info-line"><strong>义务/职责</strong> ${escapeHtml(p.duties)}</div>
+                    <div class="apply-template">管理依据：《底层任免书》+《玩家组管理制度》 | 受保护职位依据反清算条款及永久规则</div>
                 </div>
             `;
         });
         container.innerHTML = html;
     }
-    
-    // 辅助防XSS
-    function escapeHtml(str) {
-        if(!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if(m === '&') return '&amp;';
-            if(m === '<') return '&lt;';
-            if(m === '>') return '&gt;';
-            return m;
-        }).replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]/g, function(c) {
-            return c;
-        });
-    }
-    
-    // 选项卡切换逻辑 + 搜索联动初始化
-    document.addEventListener('DOMContentLoaded', function() {
-        // 选项卡事件
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                const tabId = this.getAttribute('data-tab');
-                tabContents.forEach(content => content.classList.remove('active-tab'));
-                document.getElementById(tabId).classList.add('active-tab');
-                tabBtns.forEach(btn => btn.classList.remove('active'));
-                this.classList.add('active');
-                // 如果切换到职位查看页面，重新刷新渲染（保留现有筛选值）
-                if(tabId === 'tab2') {
-                    const searchVal = document.getElementById('searchInput') ? document.getElementById('searchInput').value : '';
-                    const levelVal = document.getElementById('levelFilter') ? document.getElementById('levelFilter').value : 'all';
-                    renderPersonnel(searchVal, levelVal);
-                }
-            });
-        });
-        
-        // 初始化职位查看页面搜索与筛选事件
-        const searchInput = document.getElementById('searchInput');
-        const levelFilter = document.getElementById('levelFilter');
-        const resetBtn = document.getElementById('resetFilterBtn');
-        
-        function refreshPersonnel() {
-            const searchVal = searchInput ? searchInput.value : '';
-            const levelVal = levelFilter ? levelFilter.value : 'all';
-            renderPersonnel(searchVal, levelVal);
-        }
-        
-        if(searchInput) searchInput.addEventListener('input', refreshPersonnel);
-        if(levelFilter) levelFilter.addEventListener('change', refreshPersonnel);
-        if(resetBtn) {
-            resetBtn.addEventListener('click', function() {
-                if(searchInput) searchInput.value = '';
-                if(levelFilter) levelFilter.value = 'all';
-                refreshPersonnel();
-            });
-        }
-        
-        // 默认预渲染职位页面（初始隐藏但数据准备）
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const btns = document.querySelectorAll('.tab-btn'), contents = document.querySelectorAll('.tab-content');
+        btns.forEach(btn => btn.addEventListener('click', () => {
+            const id = btn.getAttribute('data-tab');
+            contents.forEach(c => c.classList.remove('active-tab'));
+            document.getElementById(id).classList.add('active-tab');
+            btns.forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            if (id === 'tab2') refreshPerson();
+        }));
+        const searchInput = document.getElementById('searchInput'), levelFilter = document.getElementById('levelFilter'), resetBtn = document.getElementById('resetFilterBtn');
+        function refreshPerson() { renderPersonnel(searchInput?.value || '', levelFilter?.value || 'all'); }
+        if (searchInput) searchInput.addEventListener('input', refreshPerson);
+        if (levelFilter) levelFilter.addEventListener('change', refreshPerson);
+        if (resetBtn) resetBtn.addEventListener('click', () => { if (searchInput) searchInput.value = ''; if (levelFilter) levelFilter.value = 'all'; refreshPerson(); });
         renderPersonnel('', 'all');
     });
 </script>
